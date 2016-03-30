@@ -74,7 +74,7 @@ serial.write('hi!');
 ```
 Note: encoding is ASCII.
 #### read()
-This function is to read the serial port, returns the value(split by '\n' or '\0'). 
+This function is to read the serial port, returns the value(split by '\n' or '\0' of '\r'). 
 
 Exemple: 
 ```
