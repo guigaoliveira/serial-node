@@ -11,7 +11,6 @@ var STOPBITS = [1,1.5,2];
 var PARITY = ['NONE','EVEN','MARK','ODD','SPACE'];
 var ON_OFF = ['on','off'];
 var END_READ = ['\n','\0','\r'];
-/* private functions */
 function contains(string,check) 
 { 
   return string.indexOf(check) != -1; 
@@ -120,35 +119,35 @@ function write(value,callback)
   {
     fs.writeSync(global_fd, value, null, "ascii"); // var? ascii?
   } 
-  catch (err) 
+  catch (e) 
   { 
-    console.log("Error (function write), code:"+err.code);
+    console.log("Error (function write), code:"+e.code);
     process.exit();
   }
 }
-// read try catch 
 function read()
 {
   notopen();
   var print='',string;
-  while(!contains(END_READ,string))
-  {
-    var buffer= new Buffer([0]);
-    var bytes= fs.readSync(global_fd, buffer, 0, 1, null);
-    string= buffer.toString();
-    if(bytes===1) print+=string;
-    else buffer=null;
+    while(!contains(END_READ,string))
+    {
+      var buffer= new Buffer([0]);
+      try
+      {
+        var bytes= fs.readSync(global_fd, buffer, 0, 1, null);
+      } 
+      catch(e)
+      {
+          console.log("\n Error (function read), code:"+e.code);
+          process.exit();
+      }
+      string= buffer.toString();
+      if(bytes===1) print+=string;
+      else buffer=null;
+    }
+    return print;
   }
-  return print;
 }
-/* options = options || {};
-  var aux = (options.output===0) ? 0 : (options.output===1 || options.output===undefined) ? 1 : 2;
-  if(aux==2) 
-  { 
-    console.log("Error function(read), Invalid 'output':"+options.output); 
-    process.exit();
-  }
-  if(aux==1) console.log(print);*/
 function close()
 {    
   notopen();
@@ -156,13 +155,10 @@ function close()
   {
     fs.closeSync(global_fd);
   }
-  catch(err)
+  catch(e)
   {
-      console.log("Error (function close), code:"+err.code);
+      console.log("Error (function close), code:"+e.code);
       process.exit();
   }
 }
 module.exports=config; 
-// testar em outras baud
-// colocar print: false
-// regex read try catch read
