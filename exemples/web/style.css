@@ -12,8 +12,8 @@ body
 { 
 	margin-left:40px;
 	margin-top:40px;
-	width:330px;
-	height:188px;
+	width:300px;
+	height:185px;
 	border:1px solid #ccc;
 	border-radius: 2px;
 }
@@ -24,8 +24,8 @@ body
 }
 #box
 {
-	margin-left:40px;
-	margin-top:40px;
+	margin-left:25px;
+	margin-top:25px;
 	position: absolute;
 }
 #sub
@@ -58,4 +58,9 @@ body
 .off:active
 {
 	background: #d23e2e;
+}
+#git
+{
+	font-size: 12px;
+	margin-top:15px;
 }

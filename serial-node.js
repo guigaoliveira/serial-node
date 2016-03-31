@@ -115,15 +115,7 @@ function use(port,values)
 function write(value,callback) 
 {
   notopen();
-  try 
-  {
-    fs.writeSync(global_fd, value, null, "ascii"); // var? ascii?
-  } 
-  catch (e) 
-  { 
-    console.log("Error (function write), code:"+e.code);
-    process.exit();
-  }
+  fs.writeSync(global_fd, value, null, "ascii"); 
 }
 function read()
 {
@@ -132,33 +124,16 @@ function read()
     while(!contains(END_READ,string))
     {
       var buffer= new Buffer([0]);
-      try
-      {
-        var bytes= fs.readSync(global_fd, buffer, 0, 1, null);
-      } 
-      catch(e)
-      {
-          console.log("\n Error (function read), code:"+e.code);
-          process.exit();
-      }
+      var bytes= fs.readSync(global_fd, buffer, 0, 1, null);
       string= buffer.toString();
       if(bytes===1) print+=string;
       else buffer=null;
     }
     return print;
   }
-}
 function close()
 {    
   notopen();
-  try
-  {
-    fs.closeSync(global_fd);
-  }
-  catch(e)
-  {
-      console.log("Error (function close), code:"+e.code);
-      process.exit();
-  }
+  fs.closeSync(global_fd);
 }
 module.exports=config; 
