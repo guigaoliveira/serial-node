@@ -1,4 +1,4 @@
-{
+8{
   "name": "serial-node",
   "description": "Serial Port using Node.js",
   "readmeFilename": "README.md",
@@ -13,7 +13,7 @@
     "serial",
     "arduino"
   ],
-  "version": "0.0.3",
+  "version": "0.0.8",
   "author": 
   {
     "name": "Guilherme Matheus Borges de Oliveira",

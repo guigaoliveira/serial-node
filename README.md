@@ -13,8 +13,7 @@ Exemple:
 ```
 var serial = require('serial-node');
 serial.list();
-console -> COM3
-		   COM6 
+console -> COM3  
 ```
 ###### options (optional)
 The parameter output is to control if to print on the console, controlled by 1 (on) or 0 (off).
