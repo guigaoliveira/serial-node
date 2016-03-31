@@ -7,7 +7,7 @@ app.use(express.static(__dirname + '/web'));
 server.listen(80, function() {console.log("Server Online");});
 io.on('connection', function (socket) 
 {  
-	serial.use('com3'); // config your serial port or list(); 
+	serial.use('com3'); // configure your serial port or list(); 
 	socket.on('led-status', function (data) 
 	{  
 		serial.open();
