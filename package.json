@@ -1,0 +1,33 @@
+{
+  "name": "serial-node",
+  "description": "Serial Port using Node.js",
+  "readmeFilename": "README.md",
+  "keywords": 
+  [
+    "serialport",
+    "serial"
+  ],
+  "tags": 
+  [
+    "serialport",
+    "serial",
+    "arduino"
+  ],
+  "version": "0.0.3",
+  "author": 
+  {
+    "name": "Guilherme Matheus Borges de Oliveira",
+    "email": "gmbo182@hotmail.com"
+  },
+  "repository": 
+  {
+    "type": "git",
+    "url": "https://github.com/guigaoliveira/serial-node"
+  },
+  "engines": 
+  {
+    "node": ">=0.8.0"
+  },
+  "license": "MIT",
+  "main": "serial-node.js"
+}
