@@ -57,7 +57,7 @@ This function is to open the serial port.
 Exemple: 
 ```
 var serial = require('serial-node');
-serial.use('COM3')
+serial.use('COM3');
 serial.open();
 ```
 Note: This function must come after use().
@@ -67,7 +67,7 @@ This function is to write the serial port.
 Exemple: 
 ```
 var serial = require('serial-node');
-serial.use('COM3')
+serial.use('COM3');
 serial.open();
 serial.write('hi!');
 ```
@@ -78,7 +78,7 @@ This function is to read the serial port, returns the value(split by '\n' or '\0
 Exemple: 
 ```
 var serial = require('serial-node');
-serial.use('COM3')
+serial.use('COM3');
 serial.open();
 var read = serial.read();
 console.log(read);
@@ -89,7 +89,7 @@ This function is to close the serial port in use.
 Exemple:
 ```
 var serial = require('serial-node');
-serial.use('COM3')
+serial.use('COM3');
 serial.open();
 serial.write('hi!');
 serial.close();
