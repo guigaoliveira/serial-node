@@ -1,38 +1,40 @@
 var fs = require('fs');
 var child_process = require('child_process');
 var Buffer = require('buffer').Buffer;
-var config= {write,open,list,read,close,use};
+var config={write,open,list,read,close,use};
 var global_fd; // global file descriptor
-var global= {};
-var global_e=0;
+var global= {}, global_e=0;
+/* constants */
 var DATABITS = [5,6,7,8];
 var STOPBITS = [1,1.5,2];
 var PARITY = ['NONE','EVEN','MARK','ODD','SPACE'];
 var ON_OFF = ['on','off'];
 var END_READ = ['\n','\0','\r'];
+
+/* functions */
 function contains(string,check) 
 { 
-  return string.indexOf(check) != -1; 
+    return string.indexOf(check) != -1; 
 }
 function onoff(value)
 { 
-  return (value===undefined) ? 'off' : (contains(ON_OFF,value)) ? value : 0;
+    return (value===undefined) ? 'off' : (contains(ON_OFF,value)) ? value : 0;
 }
 function error_use(global_var,local_var,text)
 {
-  if(global_var===0)
-  {
-    console.log('Error (function use): Invalid '+text+': ' + local_var); 
-    global_e=1;
-  }
+    if(global_var===0)
+    {
+      console.log('Error (function use): Invalid '+text+': ' + local_var); 
+      global_e=1;
+    }
 }
 function notopen()
 {
-  if(!global_fd) 
-  {
-    console.log("Port is not open."); 
-    process.exit();
-  }
+    if(!global_fd) 
+    {
+      console.log("Port is not open."); 
+      process.exit();
+    }
 }
 /* public functions */
 function list(options)
@@ -52,7 +54,10 @@ function list(options)
   }
   if(aux==1)
   {
-    for(i=0;i<match.length;i++) console.log(match[i]); 
+    for(i=0;i<match.length;i++) 
+    {
+      console.log(match[i]);
+    }
   }
   return match;
 }
@@ -63,7 +68,7 @@ function open()
     port= "\\\\.\\" + global.port;
     global_fd=fs.openSync(port, 'w+');
   } 
-  catch (err) 
+  catch(err) 
   { 
       var e = (err.code=='ENOENT') ? "Device not connected, please connect." : err.code;
       console.log("Error (function open): " + e); 
@@ -87,6 +92,7 @@ function use(port,values)
   global.rts = (values.dtr===undefined) ? 'on' : (contains(ON_OFF,values.rts)||values.rts=='hs'||values.rts=='tg') ? values.rts : 0;
   global.idsr = onoff(values.idsr);
   
+  /* errors console print */
   error_use(global.port,port,'port');
   error_use(global.baud,values.baud,'baud');
   error_use(global.databits,values.databits,'databits');
@@ -110,10 +116,6 @@ function use(port,values)
       {
       var mode= child_process.execSync("mode "+global.port+": BAUD="+global.baud+" PARITY="+global.parity+" data="+global.databits+" stop="+global.stopbits+" to="+global.to+" xon="+global.xon+" odsr="+global.xon+" octs="+global.octs+" dtr="+global.dtr+" rts="+global.rts+" idsr="+global.idsr+"", { encoding: 'utf8' });
       } catch(e) {}
-    }
-    else
-    {
-      console.log("Conecta aí.");
     }
   }
 }
