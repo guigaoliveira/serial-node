@@ -3,7 +3,6 @@ var child_process = require('child_process');
 var Buffer = require('buffer').Buffer;
 var config= {write,open,list,read,close,use};
 var global_fd; // global file descriptor
-var connect = 1; // var check if disconnect port / set mode port
 var global= {};
 var global_e=0;
 var DATABITS = [5,6,7,8];
@@ -61,20 +60,11 @@ function open()
 {  
   try 
   { 
-    if(connect===1 || connect===3) // when the cable is unplugged, reconnect and do "mode"
-    {   
-      try
-      {
-        var mode= child_process.execSync("mode "+global.port+": BAUD="+global.baud+" PARITY="+global.parity+" data="+global.databits+" stop="+global.stopbits+" to="+global.to+" xon="+global.xon+" odsr="+global.xon+" octs="+global.octs+" dtr="+global.dtr+" rts="+global.rts+" idsr="+global.idsr+"", { encoding: 'utf8' });
-      } catch(e){}
-      connect=2;
-    }
     port= "\\\\.\\" + global.port;
     global_fd=fs.openSync(port, 'w+');
   } 
   catch (err) 
   { 
-      connect=3;
       var e = (err.code=='ENOENT') ? "Device not connected, please connect." : err.code;
       console.log("Error (function open): " + e); 
       process.exit();
@@ -111,6 +101,21 @@ function use(port,values)
   error_use(global.idsr,values.idsr,'idsr');
 
   if(global_e) process.exit();
+  else
+  {
+    var x= this.list({output:0});
+    if(x.indexOf(port) > -1)
+    {
+      try
+      {
+      var mode= child_process.execSync("mode "+global.port+": BAUD="+global.baud+" PARITY="+global.parity+" data="+global.databits+" stop="+global.stopbits+" to="+global.to+" xon="+global.xon+" odsr="+global.xon+" octs="+global.octs+" dtr="+global.dtr+" rts="+global.rts+" idsr="+global.idsr+"", { encoding: 'utf8' });
+      } catch(e) {}
+    }
+    else
+    {
+      console.log("Conecta aí.");
+    }
+  }
 }
 function write(value,callback) 
 {
