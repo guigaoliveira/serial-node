@@ -11,14 +11,7 @@ This function list the available ports on your computer, returns an array of por
 
 Exemple:
 ```
-var serial = require('serial-node');
-serial.list();
-console -> COM3  
-```
-###### options (optional)
-The parameter output is to control if to print on the console, controlled by 1 (on) or 0 (off).
-```
-var serial = require('serial-node');
+var SerialPort= require('serial-node'), serial = new SerialPort();
 serial.list({output:0});
 for(i=0;i<list.length;i++) 
 {
@@ -32,7 +25,7 @@ The parameter 'port' is required and is the port name.
 
 Exemple:
 ```
-var serial = require('serial-node');
+var SerialPort= require('serial-node'), serial = new SerialPort();
 serial.use('COM3');
 'port' -> COM{N} (Windows).
 ```
@@ -56,7 +49,7 @@ This function is to open the serial port.
 
 Exemple: 
 ```
-var serial = require('serial-node');
+var SerialPort= require('serial-node'), serial = new SerialPort();
 serial.use('COM3');
 serial.open();
 ```
@@ -66,7 +59,7 @@ This function is to write the serial port.
 
 Exemple: 
 ```
-var serial = require('serial-node');
+var SerialPort= require('serial-node'), serial = new SerialPort();
 serial.use('COM3');
 serial.open();
 serial.write('hi!');
@@ -77,7 +70,7 @@ This function is to read the serial port, returns the value(split by '\n' or '\0
 
 Exemple: 
 ```
-var serial = require('serial-node');
+var SerialPort= require('serial-node'), serial = new SerialPort();
 serial.use('COM3');
 serial.open();
 var read = serial.read();
