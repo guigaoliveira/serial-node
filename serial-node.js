@@ -1,146 +1,154 @@
 var fs = require('fs');
 var child_process = require('child_process');
-var Buffer = require('buffer').Buffer;
-var config={write,open,list,read,close,use};
-var global_fd; // global file descriptor
-var global= {}, global_e=0;
-/* constants */
-var DATABITS = [5,6,7,8];
-var STOPBITS = [1,1.5,2];
-var PARITY = ['NONE','EVEN','MARK','ODD','SPACE'];
-var ON_OFF = ['on','off'];
-var END_READ = ['\n','\0','\r'];
+var Buff = require('buffer').Buffer;
+var fd, config= {}, check_e=0;
+var constant = {
+  dbits:[5,6,7,8],
+  sbits:[1,1.5,2],
+  parity:['NONE','EVEN','MARK','ODD','SPACE'],
+  on_off:['on','off'],
+  read_end:['\n','\0','\r']
+};
 
-/* functions */
 function contains(string,check) 
 { 
-    return string.indexOf(check) != -1; 
+  return string.indexOf(check) != -1; 
 }
 function onoff(value)
 { 
-    return (value===undefined) ? 'off' : (contains(ON_OFF,value)) ? value : 0;
+  return (!value) ? 'off' : (contains(ON_OFF,value)) ? value : 0;
 }
-function error_use(global_var,local_var,text)
+function error_use(config_var,local_var,text)
 {
-    if(global_var===0)
-    {
-      console.log('Error (function use): Invalid '+text+': ' + local_var); 
-      global_e=1;
-    }
+  if(config_var===0)
+  {
+    console.log('Error (function use): Invalid '+text+': ' + local_var); 
+    check_e=1;
+  }
 }
 function notopen()
 {
-    if(!global_fd) 
-    {
-      console.log("Port is not open."); 
-      process.exit();
-    }
-}
-/* public functions */
-function list(options)
-{  
-  var list = child_process.execSync('mode',{encoding: 'utf8'});
-  var match = list.match(/[COM]+[\d]+/g);
-  options = options || {};
-  var aux = (options.output===0) ? 0 : (options.output===1 || options.output===undefined) ? 1 : 2;
-  if(match===null) 
+  if(!fd) 
   {
-    match=[0];
-  }
-  if(aux==2) 
-  { 
-    console.log("Error function(list), Invalid 'output':"+options.output); 
+    console.log("Port is not open."); 
     process.exit();
   }
-  if(aux==1)
-  {
-    for(i=0;i<match.length;i++) 
-    {
-      console.log(match[i]);
-    }
-  }
-  return match;
 }
-function open()
-{  
+var SerialPort = function() {};
+SerialPort.prototype.list = function() 
+{
+  try
+  {
+    var list = child_process.execSync('mode',{encoding: 'utf8'});
+  }
+  catch(e) 
+  {
+    this.list();
+  }
+  var match = list.match(/[COM]+[\d]+/g);
+  if(match==null) match=[0];
+  return match;
+};
+SerialPort.prototype.open = function() 
+{
   try 
   { 
-    port= "\\\\.\\" + global.port;
-    global_fd=fs.openSync(port, 'w+');
+    port= "\\\\.\\" + config.port;
+    fd=fs.openSync(port, 'w+');
   } 
-  catch(err) 
+  catch (err) 
   { 
-      var e = (err.code=='ENOENT') ? "Device not connected, please connect." : err.code;
-      console.log("Error (function open): " + e); 
-      process.exit();
+    this.use(config.port,config.options);
+    this.open();
   }
-}
-function use(port,values)
-{ 
-  values = values || {};
-  if(port===undefined) port = 'undefined'; 
-  global.port= (port=='empty') ? 0 : ((port.match(/^COM(\d+)$/gi)) ? port : 0);
-  global.baud = (values.baud===undefined) ? 9600 : (values.baud.match(/([\d])+/g)) ? values.baud : 0;
-  global.databits = (values.databits===undefined) ? 8 : (contains(DATABITS,values.databits)) ? values.databits : 0;
-  global.parity =(values.parity===undefined) ? 'N' : (contains(PARITY,values.parity.toUpperCase())) ? values.parity.charAt(0) : 0;
-  global.stopbits= (values.stopbits===undefined) ? 1 : (contains(STOPBITS,values.stopbits)) ? values.stopbits : 0;
-  global.to = onoff(values.timeout); 
-  global.xon = onoff(values.xon);
-  global.odsr = onoff(values.odsr);
-  global.octs = onoff(values.octs); 
-  global.dtr = (values.dtr=='hs') ? values.dtr : onoff(values.dtr);
-  global.rts = (values.dtr===undefined) ? 'on' : (contains(ON_OFF,values.rts)||values.rts=='hs'||values.rts=='tg') ? values.rts : 0;
-  global.idsr = onoff(values.idsr);
-  
-  /* errors console print */
-  error_use(global.port,port,'port');
-  error_use(global.baud,values.baud,'baud');
-  error_use(global.databits,values.databits,'databits');
-  error_use(global.parity,values.parity,'parity');
-  error_use(global.stopbits,values.stopbits,'stopbits');
-  error_use(global.to,values.timeout,'timeout');
-  error_use(global.xon,values.xon,'xon');  
-  error_use(global.odsr,values.odsr,'odsr'); 
-  error_use(global.octs,values.octs,'octs');
-  error_use(global.dtr,values.dtr,'dtr');
-  error_use(global.rts,values.rts,'rts');
-  error_use(global.idsr,values.idsr,'idsr');
+};
+SerialPort.prototype.use = function(port,options) 
+{
+  options = options || {};
+  config.port= (!port) ? 0 : ((port.match(/^COM(\d+)$/gi)) ? port : 0);
+  config.baud = (!options.baud) ? 9600 : (options.baud.match(/([\d])+/g)) ? options.baud : 0;
+  config.databits = (!options.databits) ? 8 : (contains(constant.dbits,options.databits)) ? options.databits : 0;
+  config.parity =(!options.parity) ? 'N' : (contains(constant.parity,options.parity.toUpperCase())) ? options.parity.charAt(0) : 0;
+  config.stopbits= (!options.stopbits) ? 1 : (contains(constant.sbits,options.stopbits)) ? options.stopbits : 0;
+  config.to = onoff(options.timeout); 
+  config.xon = onoff(options.xon);
+  config.odsr = onoff(options.odsr);
+  config.octs = onoff(options.octs); 
+  config.dtr = (options.dtr=='hs') ? options.dtr : onoff(options.dtr);
+  config.rts = (!options.dtr) ? 'on' : (contains(ON_OFF,options.rts)||options.rts=='hs'||options.rts=='tg') ? options.rts : 0;
+  config.idsr = onoff(options.idsr);
+  config.options = options;
 
-  if(global_e) process.exit();
-  else
+  error_use(config.port,port,'port');
+  error_use(config.baud,options.baud,'baud');
+  error_use(config.databits,options.databits,'databits');
+  error_use(config.parity,options.parity,'parity');
+  error_use(config.stopbits,options.stopbits,'stopbits');
+  error_use(config.to,options.timeout,'timeout');
+  error_use(config.xon,options.xon,'xon');  
+  error_use(config.odsr,options.odsr,'odsr'); 
+  error_use(config.octs,options.octs,'octs');
+  error_use(config.dtr,options.dtr,'dtr');
+  error_use(config.rts,options.rts,'rts');
+  error_use(config.idsr,options.idsr,'idsr');
+
+  if(check_e) 
   {
-    var x= this.list({output:0});
-    if(x.indexOf(port) > -1)
+    process.exit();
+  }
+  var list= this.list();
+  if(list.indexOf(port) > -1)
+  {
+    try
     {
-      try
-      {
-      var mode= child_process.execSync("mode "+global.port+": BAUD="+global.baud+" PARITY="+global.parity+" data="+global.databits+" stop="+global.stopbits+" to="+global.to+" xon="+global.xon+" odsr="+global.xon+" octs="+global.octs+" dtr="+global.dtr+" rts="+global.rts+" idsr="+global.idsr+"", { encoding: 'utf8' });
-      } catch(e) {}
+      var mode= child_process.execSync("mode "+config.port+": BAUD="+config.baud+" PARITY="+config.parity+" data="+config.databits+" stop="+config.stopbits+" rts="+config.rts+"", { encoding: 'utf8' });
+    } 
+    catch(e) 
+    {
+      this.use(port,options);
     }
   }
-}
-function write(value,callback) 
+  else 
+  {
+    this.use(port,options);
+  }
+};
+SerialPort.prototype.write = function(value) 
 {
   notopen();
-  fs.writeSync(global_fd, value, null, "ascii"); 
-}
-function read()
+  try 
+  {
+    fs.writeSync(fd, value, null, "ascii"); 
+  } 
+  catch (err) 
+  { 
+    this.write(value);
+  }
+};
+SerialPort.prototype.read = function(value) 
 {
   notopen();
   var print='',string;
-    while(!contains(END_READ,string))
-    {
-      var buffer= new Buffer([0]);
-      var bytes= fs.readSync(global_fd, buffer, 0, 1, null);
-      string= buffer.toString();
-      if(bytes===1) print+=string;
-      else buffer=null;
-    }
-    return print;
+  while(!contains(constant.read_end,string))
+  {
+    var buff= new Buff([0]);
+    var read= fs.readSync(fd, buff, 0, 1, null);
+    string= buffer.toString();
+    if(read===1) print+=string;
+    else buffer=null;
   }
-function close()
-{    
+  return print;
+};
+SerialPort.prototype.close = function() 
+{
   notopen();
-  fs.closeSync(global_fd);
-}
-module.exports=config; 
+  try
+  {
+    fs.closeSync(fd);
+  }
+  catch(err)
+  {
+    this.close();
+  }
+};
+module.exports=SerialPort;
