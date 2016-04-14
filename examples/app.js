@@ -2,7 +2,7 @@ var express = require('express');
 var app = require('express')();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-var serial= require('../serial-node');
+var SerialPort= require('../serial-node'), serial = new SerialPort();
 app.use(express.static(__dirname + '/web'));
 server.listen(80, function() {console.log("Server Online");});
 io.on('connection', function (socket) 
