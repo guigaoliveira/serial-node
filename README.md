@@ -1,4 +1,5 @@
 # Serial-node
+![Alt text](image/logo.png "Logo")
 Serial-node is a module for Node.js to control serial ports. (For now only for windows, soon to Linux and MacOS.)
 ### Installation
 Via NPM:
@@ -6,16 +7,16 @@ Via NPM:
 npm install serial-node -g
 ```
 ### Functions
-#### list(options)
+#### list()
 This function list the available ports on your computer, returns an array of ports. 
 
 Exemple:
 ```
 var SerialPort= require('serial-node'), serial = new SerialPort();
-serial.list({output:0});
+serial.list();
 for(i=0;i<list.length;i++) 
 {
-	console.log(match[i]); 
+    console.log(match[i]); 
 }
 ```
 Note: if there is no available port, the returned array is equal 0.
