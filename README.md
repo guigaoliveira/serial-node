@@ -1,5 +1,5 @@
-# Serial-node
 ![alt tag](http://s32.postimg.org/3rpwkphg5/Serial_simbol.png)
+# Serial-node
 Serial-node is a module for Node.js to control serial ports. (For now only for windows, soon to Linux and MacOS.)
 ### Installation
 Via NPM:
