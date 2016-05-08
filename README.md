@@ -4,7 +4,7 @@ Serial-node is a module for Node.js to control serial ports. (For now only for w
 ### Installation
 Via NPM:
 ```
-npm install serial-node -g
+npm install serial-node 
 https://www.npmjs.com/package/serial-node
 ```
 ### Functions
