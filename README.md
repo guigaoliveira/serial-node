@@ -11,23 +11,26 @@ https://www.npmjs.com/package/serial-node
 #### list()
 This function list the available ports on your computer, returns an array of ports. 
 
-Exemple:
+Example:
 ```
-var SerialPort= require('serial-node'), serial = new SerialPort();
-serial.list();
+var SerialPort = require('serial-node');
+var serial = new SerialPort();
+var match = serial.list();
 for(i=0;i<list.length;i++) 
 {
     console.log(match[i]); 
 }
 ```
 Note: if there is no available port, the returned array is equal 0.
+
 #### use(port,values)
 This function is to set up and use a port. 
 The parameter 'port' is required and is the port name. 
 
-Exemple:
+Example:
 ```
-var SerialPort= require('serial-node'), serial = new SerialPort();
+var SerialPort = require('serial-node');
+var serial = new SerialPort();
 serial.use('COM3');
 'port' -> COM{N} (Windows).
 ```
@@ -45,48 +48,129 @@ The parameter 'values' is to set the parameters of a serial port.
  * dtr, defaults to off. Must be one of: on or off. 
  * rts, defaults to on. Must be one of: on or off.
  * idsr, defaults to off. Must be one of: on or off.
- 
-#### open()
-This function is to open the serial port. 
-
-Exemple: 
-```
-var SerialPort= require('serial-node'), serial = new SerialPort();
-serial.use('COM3');
-serial.open();
-```
-Note: This function must come after use().
+ * callbackUse , function callback when **Use** is completed.
+ * callbackWrite , function callback when **Write** is completed.
+ * callbackRead , function callback when **Read** is completed.
+ * callbackList, function callback when **List** is completed.
+  
 #### write(value)
 This function is to write the serial port. 
 
-Exemple: 
+Example: 
 ```
-var SerialPort= require('serial-node'), serial = new SerialPort();
+var SerialPort= require('serial-node');
+var serial = new SerialPort();
 serial.use('COM3');
-serial.open();
 serial.write('hi!');
 ```
 Note: encoding is ASCII.
-#### read()
+#### read([looping])
 This function is to read the serial port, returns the value(split by '\n' or '\0' of '\r'). 
 
-Exemple: 
+Example 1: 
 ```
 var SerialPort= require('serial-node'), serial = new SerialPort();
-serial.use('COM3');
-serial.open();
+serial.use('COM3'); 
 var read = serial.read();
 console.log(read);
 ```
-#### close()
-This function is to close the serial port in use.
 
-Exemple:
+Example 2: *(Using looping feature)*
+When the lopping parameter is *true* the callbackUse is called until the *stop* function is called.
 ```
-var serial = require('serial-node');
-serial.use('COM3');
-serial.open();
-serial.write('hi!');
-serial.close();
+var SerialPort= require('serial-node');
+var serial = new SerialPort();
+
+serial.use('COM3', { 
+            callbackRead: function (args) {
+      
+                var read = args.value.trim() || '';
+	            console.log(read);
+
+            }
+          });
+
+//reading serial in looping
+serial.read(true);
+  
+``` 
+#### stop()
+This function is to stop reading if was set to looping 
+
+Example: 
 ```
-Note: This function must come after open() and use().
+var SerialPort= require('serial-node');
+var serial = new SerialPort();
+
+serial.use('COM3', { 
+            callbackRead: function (args) {
+      
+                var read = args.value.trim() || '';
+	            console.log(read);
+
+            }
+          });
+
+//reading serial in looping
+serial.read(true);
+
+//wait for 5 seconds to stop reading
+setTimeout(function () {
+    serial.stop();
+}, 5000);
+
+```
+
+### Events
+Please, take a look into callbacks on Use function options.
+Example: 
+```
+
+var SerialPort= require('serial-node');
+var serial = new SerialPort();
+//creating the serial object
+var serial = new SerialPort();
+
+//setting use with config arguments and callback functions
+serial.use('COM3', {
+    baud: '2400',
+    callbackUse: function (args) {
+
+        if (args.state) {
+
+            //reading serial in looping
+            serial.read(true);
+ 
+            //wait for 5 seconds to stop reading
+            setTimeout(function () {
+                serial.stop();
+            }, 5000);
+             
+        }
+
+    },
+    callbackRead: function (args) {
+         
+        //my rules to accept data when the serial data was like: @6:0!
+        var read = args.value.trim() || '';
+        if (read.startsWith('@') && read.endsWith('!') && read.length == 5) {
+
+            //show the useful data
+            console.log(read);
+
+        }
+
+    },
+    callbackWrite: function (args) {
+
+        //nothing todo for now
+
+    },
+    callbackList: function (args) {
+
+        //nothing todo for now
+
+    }
+
+});
+```
