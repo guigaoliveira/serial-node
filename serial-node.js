@@ -133,9 +133,9 @@ SerialPort.prototype.read = function(value)
   {
     var buff= new Buff([0]);
     var read= fs.readSync(fd, buff, 0, 1, null);
-    string= buffer.toString();
+    string= buff.toString();
     if(read===1) print+=string;
-    else buffer=null;
+    else buff=null;
   }
   return print;
 };
