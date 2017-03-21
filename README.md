@@ -3,7 +3,7 @@
 Serial-node is a module for Node.js to control serial ports. (For now only for windows, soon to Linux and MacOS.)
 ### Installation
 Via NPM:
-```
+```sh
 npm install serial-node 
 https://www.npmjs.com/package/serial-node
 ```
@@ -12,7 +12,7 @@ https://www.npmjs.com/package/serial-node
 This function list the available ports on your computer, returns an array of ports. 
 
 Example:
-```
+```javascript
 var SerialPort = require('serial-node');
 var serial = new SerialPort();
 var match = serial.list();
@@ -28,7 +28,7 @@ This function is to set up and use a port.
 The parameter 'port' is required and is the port name. 
 
 Example:
-```
+```javascript
 var SerialPort = require('serial-node');
 var serial = new SerialPort();
 serial.use('COM3');
@@ -57,7 +57,7 @@ The parameter 'values' is to set the parameters of a serial port.
 This function is to write the serial port. 
 
 Example: 
-```
+```javascript
 var SerialPort= require('serial-node');
 var serial = new SerialPort();
 serial.use('COM3');
@@ -68,7 +68,7 @@ Note: encoding is ASCII.
 This function is to read the serial port, returns the value(split by '\n' or '\0' of '\r'). 
 
 Example 1: 
-```
+```javascript
 var SerialPort= require('serial-node'), serial = new SerialPort();
 serial.use('COM3'); 
 var read = serial.read();
@@ -77,7 +77,7 @@ console.log(read);
 
 Example 2: *(Using looping feature)*
 When the lopping parameter is *true* the callbackUse is called until the *stop* function is called.
-```
+```javascript
 var SerialPort= require('serial-node');
 var serial = new SerialPort();
 
@@ -98,7 +98,7 @@ serial.read(true);
 This function is to stop reading if was set to looping 
 
 Example: 
-```
+```javascript
 var SerialPort= require('serial-node');
 var serial = new SerialPort();
 
@@ -124,7 +124,7 @@ setTimeout(function () {
 ### Events
 Please, take a look into callbacks on Use function options.
 Example: 
-```
+```javascript
 
 var SerialPort= require('serial-node');
 var serial = new SerialPort();
