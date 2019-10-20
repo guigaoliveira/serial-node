@@ -1,4 +1,3 @@
-![alt tag](https://camo.githubusercontent.com/56c24ffe3f0b7230fc8209bbffda43386b6fd13b/687474703a2f2f7333322e706f7374696d672e6f72672f337270776b706867352f53657269616c5f73696d626f6c2e706e67)
 # Serial-node
 Serial-node is a module for Node.js to control serial ports. (For now only for windows, soon to Linux and MacOS.)
 ### Installation
@@ -13,13 +12,11 @@ This function list the available ports on your computer, returns an array of por
 
 Example:
 ```javascript
-var SerialPort = require('serial-node');
-var serial = new SerialPort();
-var match = serial.list();
-for(i=0;i<list.length;i++) 
-{
-    console.log(match[i]); 
-}
+const SerialPort = require('serial-node');
+const serialList = new SerialPort().list();
+
+serialList.forEach(console.log); 
+
 ```
 Note: if there is no available port, the returned array is equal 0.
 
@@ -29,10 +26,9 @@ The parameter 'port' is required and is the port name.
 
 Example:
 ```javascript
-var SerialPort = require('serial-node');
-var serial = new SerialPort();
+const SerialPort = require('serial-node');
+const serial = new SerialPort();
 serial.use('COM3');
-'port' -> COM{N} (Windows).
 ```
 ###### values (optional)
 The parameter 'values' is to set the parameters of a serial port.
@@ -58,8 +54,8 @@ This function is to write the serial port.
 
 Example: 
 ```javascript
-var SerialPort= require('serial-node');
-var serial = new SerialPort();
+const SerialPort= require('serial-node');
+const serial = new SerialPort();
 serial.use('COM3');
 serial.write('hi!');
 ```
@@ -69,26 +65,26 @@ This function is to read the serial port, returns the value(split by '\n' or '\0
 
 Example 1: 
 ```javascript
-var SerialPort= require('serial-node'), serial = new SerialPort();
+const SerialPort= require('serial-node');
+const serial = new SerialPort();
 serial.use('COM3'); 
-var read = serial.read();
+const read = serial.read();
 console.log(read);
 ```
 
 Example 2: *(Using looping feature)*
 When the lopping parameter is *true* the callbackUse is called until the *stop* function is called.
 ```javascript
-var SerialPort= require('serial-node');
-var serial = new SerialPort();
+const SerialPort= require('serial-node');
+const serial = new SerialPort();
 
 serial.use('COM3', { 
-            callbackRead: function (args) {
-      
-                var read = args.value.trim() || '';
-	            console.log(read);
-
-            }
-          });
+  callbackRead: (args) => {
+    const read = args.value.trim() || '';
+    console.log(read);
+   }
+ }
+);
 
 //reading serial in looping
 serial.read(true);
@@ -99,23 +95,22 @@ This function is to stop reading if was set to looping
 
 Example: 
 ```javascript
-var SerialPort= require('serial-node');
-var serial = new SerialPort();
+const SerialPort= require('serial-node');
+const serial = new SerialPort();
 
 serial.use('COM3', { 
-            callbackRead: function (args) {
-      
-                var read = args.value.trim() || '';
-	            console.log(read);
-
-            }
-          });
+  callbackRead: (args) => {
+    const read = args.value.trim() || '';
+    console.log(read);
+   }
+ }
+);
 
 //reading serial in looping
 serial.read(true);
 
 //wait for 5 seconds to stop reading
-setTimeout(function () {
+setTimeout(() => {
     serial.stop();
 }, 5000);
 
@@ -126,49 +121,41 @@ Please, take a look into callbacks on Use function options.
 Example: 
 ```javascript
 
-var SerialPort= require('serial-node');
-var serial = new SerialPort();
-//creating the serial object
-var serial = new SerialPort();
+const SerialPort= require('serial-node');
+const serial = new SerialPort();
 
-//setting use with config arguments and callback functions
+// setting use with config arguments and callback functions
 serial.use('COM3', {
     baud: '2400',
-    callbackUse: function (args) {
-
+    callbackUse: (args) => {
         if (args.state) {
-
-            //reading serial in looping
+            // reading serial in looping
             serial.read(true);
  
-            //wait for 5 seconds to stop reading
-            setTimeout(function () {
+            // wait for 5 seconds to stop reading
+            setTimeout(() => {
                 serial.stop();
             }, 5000);
-             
         }
-
     },
-    callbackRead: function (args) {
-         
-        //my rules to accept data when the serial data was like: @6:0!
+    callbackRead: (args) => {
+        // my rules to accept data when the serial data was like: @6:0!
         var read = args.value.trim() || '';
         if (read.startsWith('@') && read.endsWith('!') && read.length == 5) {
-
-            //show the useful data
+            // show the useful data
             console.log(read);
 
         }
 
     },
-    callbackWrite: function (args) {
+    callbackWrite: (args) => {
 
-        //nothing todo for now
+        // nothing todo for now
 
     },
-    callbackList: function (args) {
+    callbackList: (args) => {
 
-        //nothing todo for now
+        // nothing todo for now
 
     }
 
