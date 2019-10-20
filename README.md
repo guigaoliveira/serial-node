@@ -86,9 +86,7 @@ serial.use('COM3', {
  }
 );
 
-//reading serial in looping
-serial.read(true);
-  
+serial.read(true); // reading serial in looping
 ``` 
 #### stop()
 This function is to stop reading if was set to looping 
@@ -106,14 +104,12 @@ serial.use('COM3', {
  }
 );
 
-//reading serial in looping
-serial.read(true);
+serial.read(true); // reading serial in looping
 
-//wait for 5 seconds to stop reading
+// wait for 5 seconds to stop reading
 setTimeout(() => {
     serial.stop();
 }, 5000);
-
 ```
 
 ### Events
@@ -126,7 +122,7 @@ const serial = new SerialPort();
 
 // setting use with config arguments and callback functions
 serial.use('COM3', {
-    baud: '2400',
+    baud: '115200',
     callbackUse: (args) => {
         if (args.state) {
             // reading serial in looping
@@ -144,20 +140,13 @@ serial.use('COM3', {
         if (read.startsWith('@') && read.endsWith('!') && read.length == 5) {
             // show the useful data
             console.log(read);
-
         }
-
     },
     callbackWrite: (args) => {
-
         // nothing todo for now
-
     },
     callbackList: (args) => {
-
         // nothing todo for now
-
     }
-
 });
 ```
